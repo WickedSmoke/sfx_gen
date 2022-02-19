@@ -56,11 +56,11 @@ GUI Program
 
 The `qfxgen` program...
 
-![Screenshot](https://github.com/WickedSmoke/sfx_gen/wiki/images/qfxgen.png)
+![Screenshot](https://github.com/WickedSmoke/sfx_gen/wiki/images/qfxgen.jpg)
 
 ### Building the GUI
 
-Qt 5 and OpenAL are required.  Project files are provided for QMake & copr.
+Qt 5 and OpenAL are required.  Project files are provided for QMake & [Copr].
 
 To build with QMake:
 
@@ -80,7 +80,7 @@ files in two ways.
  1. The output filename for each Wave can be specified by using the `-o`
     option after each input file.
  2. If `-o` does not follow the input filename then that path with the
-    extension replaced with `.wav' is used as the output filename.
+    extension replaced with `.wav` is used as the output filename.
 
 To generate Wave files for an entire directory shell wildcards can be used:
 
@@ -95,3 +95,4 @@ To build on Unix systems:
 
 [sfxr]: http://www.drpetter.se/project_sfxr.html
 [rFXGen]: https://raylibtech.itch.io/rfxgen
+[Copr]: http://urlan.sourceforge.net/copr.html
