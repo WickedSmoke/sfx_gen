@@ -1,0 +1,10 @@
+The sfx_gen C library and the CLI program may be used under the terms of the
+MIT license (see sfx_gen.c).
+
+The GUI program in the gui_qt directory is licensed under the GPLv3 (see
+https://www.gnu.org/licenses/gpl-3.0.txt).
+
+The SVG icons are from https://icon-sets.iconify.design/mdi/waveform/ and
+licensed as follows:
+    wave-noise.svg: Copyright Austin Andrews, Apache 2.0 license.
+    wave-s*.svg:    Copyright Phosphor Icons, MIT license.

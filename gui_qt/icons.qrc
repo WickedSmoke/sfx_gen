@@ -1,0 +1,8 @@
+<RCC>
+<qresource>
+<file>icons/wave-square.svg</file>
+<file>icons/wave-sawtooth.svg</file>
+<file>icons/wave-sine.svg</file>
+<file>icons/wave-noise.svg</file>
+</qresource>
+</RCC>
