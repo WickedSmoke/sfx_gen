@@ -95,19 +95,21 @@ static const char* genName[] = {
     "Randomize"
 };
 
-#define WFORM_COUNT 4
+#define WFORM_COUNT 5
 static const char* wformName[] = {
     "Square",
     "Sawtooth",
     "Sinewave",
-    "Noise"
+    "Noise",
+    "Triangle"
 };
 
 static const char* wformIcon[] = {
     ":/icons/wave-square.svg",
     ":/icons/wave-sawtooth.svg",
     ":/icons/wave-sine.svg",
-    ":/icons/wave-noise.svg"
+    ":/icons/wave-noise.svg",
+    ":/icons/wave-triangle.svg"
 };
 
 static void addGeneratorButton(QWidget* parent, int id, QBoxLayout* lo)
@@ -623,7 +625,7 @@ void AWindow::updateParameterWidgets(const SfxParams* sp)
 {
     const float* fval = &sp->attackTime;
     _paramAssign = false;
-    _waveType[ sp->waveType & 3 ]->setChecked(true);
+    _waveType[ sp->waveType ]->setChecked(true);
     for (int p = 1; p < PARAM_COUNT; ++p) {
         _param[p]->setValue(fval[0] * 100.0f);
         ++fval;

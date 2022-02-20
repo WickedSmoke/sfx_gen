@@ -79,7 +79,7 @@ private:
     QAction* _actPoc;
 
     QToolBar* _tools;
-    QPushButton* _waveType[4];
+    QPushButton* _waveType[5];
     QSlider* _param[23];
     QLabel*  _paramReadout[23];
     QLabel*  _wavePic;

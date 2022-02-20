@@ -17,7 +17,8 @@ enum SfxWaveType {
     SFX_SQUARE,
     SFX_SAWTOOTH,
     SFX_SINE,
-    SFX_NOISE
+    SFX_NOISE,
+    SFX_TRIANGLE
 };
 
 // Sound parameters (96 bytes matching rFXGen WaveParams)

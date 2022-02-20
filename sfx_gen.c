@@ -365,6 +365,8 @@ int sfx_generateWave(SfxSynth* synth, const SfxParams* sp)
             // Base waveform
             fp = (float)phase/period;
 
+#define RAMP(v, x1, x2, y1, y2) (y1 + (y2-y1) * ((v-x1) / (x2-x1)))
+
             switch (sp->waveType) {
                 case SFX_SQUARE:
                     sample = (fp < squareDuty) ? 0.5f : -0.5f;
@@ -377,6 +379,10 @@ int sfx_generateWave(SfxSynth* synth, const SfxParams* sp)
                     break;
                 case SFX_NOISE:
                     sample = noiseBuffer[phase*32/period];
+                    break;
+                case SFX_TRIANGLE:
+                    sample = (fp < 0.5) ? RAMP(fp, 0.0f, 0.5f, -1.0f, 1.0f) :
+                                          RAMP(fp, 0.5f, 1.0f, 1.0f, -1.0f);
                     break;
             }
 

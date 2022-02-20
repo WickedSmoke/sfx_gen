@@ -4,5 +4,6 @@
 <file>icons/wave-sawtooth.svg</file>
 <file>icons/wave-sine.svg</file>
 <file>icons/wave-noise.svg</file>
+<file>icons/wave-triangle.svg</file>
 </qresource>
 </RCC>
