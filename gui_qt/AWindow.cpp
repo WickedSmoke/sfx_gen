@@ -158,18 +158,25 @@ void AWindow::addSlider(QGridLayout* grid, int row, const char* label, int neg)
     QSlider* slid = _param[row] = new QSlider(Qt::Horizontal);
     slid->setProperty("pid", row);
     slid->setTracking(false);
-    slid->setRange(neg ? -100 : 0, 100);
-    slid->setPageStep(10);
-    connect(slid, SIGNAL(valueChanged(int)), SLOT(paramChanged(int)));
 
-    QLabel* vlabel = _paramReadout[row] = new QLabel("0.00");
+    const char* ltext;
+    if (row == PARAM_VOL) {
+        slid->setRange(0, 100);
+        slid->setPageStep(10);
+        connect(slid, SIGNAL(valueChanged(int)), SLOT(volumeChanged(int)));
+        ltext = "0.00";
+    } else {
+        slid->setRange(neg ? -400 : 0, 400);
+        slid->setPageStep(40);
+        connect(slid, SIGNAL(valueChanged(int)), SLOT(paramChanged(int)));
+        ltext = "0.000";
+    }
+
+    QLabel* vlabel = _paramReadout[row] = new QLabel(ltext);
     grid->addWidget(new QLabel(label), row, 1, Qt::AlignLeft);
     grid->addWidget(slid, row, 2);
     grid->addWidget(vlabel, row, 3, Qt::AlignRight);
 }
-
-#define PARAM_VOL   0
-#define PARAM_COUNT 23
 
 static const char* paramName[PARAM_COUNT] = {
     "Volume",
@@ -218,7 +225,9 @@ void AWindow::layoutParams(QBoxLayout* plo)
     for (int i = 0; i < PARAM_COUNT; ++i)
         addSlider(grid, i, paramName[i], paramNegative & (1 << i));
 
-    grid->setColumnMinimumWidth(2, 40);
+    QWidget* label = grid->itemAtPosition(1, 0)->widget();
+    int lwidth = label->fontMetrics().horizontalAdvance("-0.333");
+    grid->setColumnMinimumWidth(3, lwidth);
     grid->setRowStretch(PARAM_COUNT, 1);
 
     plo->addLayout(grid, 2);
@@ -627,7 +636,7 @@ void AWindow::updateParameterWidgets(const SfxParams* sp)
     _paramAssign = false;
     _waveType[ sp->waveType ]->setChecked(true);
     for (int p = 1; p < PARAM_COUNT; ++p) {
-        _param[p]->setValue(fval[0] * 100.0f);
+        _param[p]->setValue(fval[0] * 400.0f);
         ++fval;
     }
     _paramAssign = true;
@@ -763,16 +772,23 @@ void AWindow::chooseFile(const QModelIndex& mi)
 }
 
 
+void AWindow::volumeChanged(int value)
+{
+    float fv = float(value) * 0.01f;
+    _paramReadout[PARAM_VOL]->setText(QString::number(fv, 'f', 2));
+    aud_setSoundVolume(fv);
+    if (_playOnChange)
+        playSound();
+}
+
+
 void AWindow::paramChanged(int value)
 {
     int pid = sender()->property("pid").toInt();
-    float fv = float(value) * 0.01f;
-    _paramReadout[pid]->setText(QString::number(fv, 'f', 2));
-    if (pid == PARAM_VOL) {
-        aud_setSoundVolume(fv);
-        if (_playOnChange)
-            playSound();
-    } else if (_paramAssign) {
+    float fv = float(value) * 0.0025f;
+    _paramReadout[pid]->setText(QString::number(fv, 'f', 3));
+
+    if (_paramAssign) {
         float* fval = &_wav->params[_activeWav].attackTime;
         fval[pid - 1] = fv;
         //printf( "KR pc %d %d\n", pid, value);

@@ -10,6 +10,9 @@
 #include <QMainWindow>
 
 
+#define PARAM_VOL   0
+#define PARAM_COUNT 23
+
 struct SfxParams;
 struct SfxSynth;
 struct Wave;
@@ -55,6 +58,7 @@ private slots:
     void chooseWaveSlot(int, bool checked);
     void chooseWaveForm(int, bool checked);
     void chooseFile(const QModelIndex&);
+    void volumeChanged(int);
     void paramChanged(int);
 
 private:
@@ -80,8 +84,8 @@ private:
 
     QToolBar* _tools;
     QPushButton* _waveType[5];
-    QSlider* _param[23];
-    QLabel*  _paramReadout[23];
+    QSlider* _param[PARAM_COUNT];
+    QLabel*  _paramReadout[PARAM_COUNT];
     QLabel*  _wavePic;
     QPixmap  _wavePix;
     QLabel*  _stats[3];
