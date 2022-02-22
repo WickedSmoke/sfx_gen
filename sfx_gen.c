@@ -72,18 +72,38 @@ SfxSynth* sfx_allocSynth(int format, int sampleRate, int maxDuration)
     return syn;
 }
 
-#ifndef CONFIG_SFX_NO_GENERATORS
 // Return float in the range 0.0 to 1.0 (both inclusive).
 static float frnd(float range)
 {
     return (float)sfx_random(10001)/10000.0f*range;
 }
-#endif
 
 // Return float in the range -1.0 to 1.0 (both inclusive).
 static float rndNP1()
 {
     return (float)sfx_random(20001)/10000.0f - 1.0f;
+}
+
+#define PINK_SIZE   5
+
+// Return -1.0 to 1.0.
+static float pinkValue(int* pinkI, float* whiteValue)
+{
+    float sum = 0.0;
+    int bitsChanged;
+    int lastI = *pinkI;
+    int i = lastI + 1;
+    if (i > 0x1f)       // Number of set bits matches PINK_SIZE.
+        i = 0;
+    bitsChanged = lastI ^ i;
+    *pinkI = i;
+
+    for (i = 0; i < PINK_SIZE; ++i) {
+        if (bitsChanged & (1 << i))
+            whiteValue[i] = frnd(1.0f);
+        sum += whiteValue[i];
+    }
+    return (sum/PINK_SIZE) * 2.0f - 1.0f;
 }
 
 /*
@@ -129,6 +149,7 @@ int sfx_generateWave(SfxSynth* synth, const SfxParams* sp)
     int arpeggioLimit;
     double arpeggioModulation;
     float minFreq, sslide;
+    int pinkI;
     int i, sampleCount;
 
 
@@ -196,10 +217,22 @@ int sfx_generateWave(SfxSynth* synth, const SfxParams* sp)
     for (i = 0; i < 1024; i++)
         phaserBuffer[i] = 0.0f;
 
-    if (sp->waveType == SFX_NOISE) {
-        for (i = 0; i < 32; i++)
-            noiseBuffer[i] = rndNP1();
+    if (sp->waveType == SFX_PINK_NOISE) {
+        pinkI = 0;
+        for (i = 0; i < PINK_SIZE; i++)
+            synth->pinkWhiteValue[i] = frnd(1.0f);
     }
+
+#define RESET_NOISE \
+    if (sp->waveType == SFX_NOISE) { \
+        for (i = 0; i < 32; i++) \
+            noiseBuffer[i] = rndNP1(); \
+    } else if (sp->waveType == SFX_PINK_NOISE) { \
+        for (i = 0; i < 32; i++) \
+            noiseBuffer[i] = pinkValue(&pinkI, synth->pinkWhiteValue); \
+    }
+
+    RESET_NOISE
 
     repeatTime = 0;
     repeatLimit = (int)(powf(1.0f - sp->repeatSpeed, 2.0f)*20000 + 32);
@@ -311,10 +344,7 @@ int sfx_generateWave(SfxSynth* synth, const SfxParams* sp)
                 //phase = 0;
                 phase %= period;
 
-                if (sp->waveType == SFX_NOISE) {
-                    for (i = 0; i < 32; i++)
-                        noiseBuffer[i] = rndNP1();
-                }
+                RESET_NOISE
             }
 
             // Base waveform
@@ -333,6 +363,7 @@ int sfx_generateWave(SfxSynth* synth, const SfxParams* sp)
                     sample = sinf(fp*2*PI);
                     break;
                 case SFX_NOISE:
+                case SFX_PINK_NOISE:
                     sample = noiseBuffer[phase*32/period];
                     break;
                 case SFX_TRIANGLE:

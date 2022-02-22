@@ -18,7 +18,8 @@ enum SfxWaveType {
     SFX_SAWTOOTH,
     SFX_SINE,
     SFX_NOISE,
-    SFX_TRIANGLE
+    SFX_TRIANGLE,
+    SFX_PINK_NOISE
 };
 
 // Sound parameters (96 bytes matching rFXGen WaveParams)
@@ -89,7 +90,8 @@ typedef struct SfxSynth {
         int16_t* i16;
         float*   f;
     } samples;                  // sampleRate * maxDuration
-    float noiseBuffer[32];      // Random values for WTYPE_NOISE
+    float noiseBuffer[32];      // Random values for SFX_NOISE/SFX_PINK_NOISE
+    float pinkWhiteValue[5];    // SFX_PINK_NOISE
     float phaserBuffer[1024];
 }
 SfxSynth;

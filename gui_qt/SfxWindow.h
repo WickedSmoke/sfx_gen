@@ -85,7 +85,7 @@ private:
     QAction* _actPoc;
 
     QToolBar* _tools;
-    QPushButton* _waveType[5];
+    QPushButton* _waveType[6];
     QSlider* _param[PARAM_COUNT];
     QLabel*  _paramReadout[PARAM_COUNT];
     QLabel*  _wavePic;

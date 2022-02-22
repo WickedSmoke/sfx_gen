@@ -8,6 +8,9 @@ The project includes the following:
   - A Qt based GUI program for creating sound parameters & Wave files.
   - A CLI program to create Wave files from parameters.
 
+Sfx_gen extends the original sfxr code by adding two new wave types: Triangle
+& Pink Noise.
+
 
 Synthesizer Module
 ------------------

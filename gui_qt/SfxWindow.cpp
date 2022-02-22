@@ -95,13 +95,14 @@ static const char* genName[] = {
     "Randomize"
 };
 
-#define WFORM_COUNT 5
+#define WFORM_COUNT 6
 static const char* wformName[] = {
     "Square",
     "Sawtooth",
     "Sinewave",
     "Noise",
-    "Triangle"
+    "Triangle",
+    "Pink Noise"
 };
 
 static const char* wformIcon[] = {
@@ -109,7 +110,8 @@ static const char* wformIcon[] = {
     ":/icons/wave-sawtooth.svg",
     ":/icons/wave-sine.svg",
     ":/icons/wave-noise.svg",
-    ":/icons/wave-triangle.svg"
+    ":/icons/wave-triangle.svg",
+    ":/icons/wave-pinknoise.svg"
 };
 
 static void addGeneratorButton(QWidget* parent, int id, QBoxLayout* lo)
