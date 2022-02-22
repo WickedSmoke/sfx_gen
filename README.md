@@ -44,11 +44,19 @@ reloaded later:
 
     const char* error = sfx_saveRfx(&param, "test_sound.rfx");
     if (error)
-        printf("Save Failed: %s\n", error);
+        printf("Save RFX: %s\n", error);
 
     ...
 
     error = sfx_loadParams(&param, "test_sound.rfx", NULL);
+
+The compiled code can be modified by defining the following macros:
+
+Macro Name               | Effect
+-------------------------|--------------
+CONFIG_SFX_NO_FILEIO     | Exclude file load/save functions.
+CONFIG_SFX_NO_GENERATORS | Exclude parameter generator functions.
+SINGLE_FORMAT=[1,3]      | Hardcode sfx_generateWave output sample format.
 
 
 GUI Program

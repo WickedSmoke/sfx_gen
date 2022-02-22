@@ -45,53 +45,6 @@ extern int sfx_random(int range);
 #define PI  3.14159265f
 
 /*
- * Reset sound parameters to a default square wave.
- * The randSeed is set to zero.
- */
-void sfx_resetParams(SfxParams *sp)
-{
-    sp->randSeed = 0;
-    sp->waveType = SFX_SQUARE;
-
-    // Wave envelope parameters
-    sp->attackTime = 0.0f;
-    sp->sustainTime = 0.3f;
-    sp->sustainPunch = 0.0f;
-    sp->decayTime = 0.4f;
-
-    // Frequency parameters
-    sp->startFrequency = 0.3f;
-    sp->minFrequency = 0.0f;
-    sp->slide = 0.0f;
-    sp->deltaSlide = 0.0f;
-    sp->vibratoDepth = 0.0f;
-    sp->vibratoSpeed = 0.0f;
-    //sp->vibratoPhaseDelay = 0.0f;
-
-    // Tone change parameters
-    sp->changeAmount = 0.0f;
-    sp->changeSpeed = 0.0f;
-
-    // Square wave parameters
-    sp->squareDuty = 0.0f;
-    sp->dutySweep = 0.0f;
-
-    // Repeat parameters
-    sp->repeatSpeed = 0.0f;
-
-    // Phaser parameters
-    sp->phaserOffset = 0.0f;
-    sp->phaserSweep = 0.0f;
-
-    // Filter parameters
-    sp->lpfCutoff = 1.0f;
-    sp->lpfCutoffSweep = 0.0f;
-    sp->lpfResonance = 0.0f;
-    sp->hpfCutoff = 0.0f;
-    sp->hpfCutoffSweep = 0.0f;
-}
-
-/*
  * Allocate a synth structure and sample buffer as a single block of memory.
  * Returns a pointer to an initialized SfxSynth structure which the caller
  * must free().
@@ -119,11 +72,13 @@ SfxSynth* sfx_allocSynth(int format, int sampleRate, int maxDuration)
     return syn;
 }
 
+#ifndef CONFIG_SFX_NO_GENERATORS
 // Return float in the range 0.0 to 1.0 (both inclusive).
 static float frnd(float range)
 {
     return (float)sfx_random(10001)/10000.0f*range;
 }
+#endif
 
 // Return float in the range -1.0 to 1.0 (both inclusive).
 static float rndNP1()
@@ -453,6 +408,7 @@ int sfx_generateWave(SfxSynth* synth, const SfxParams* sp)
     return sampleCount;
 }
 
+#ifndef CONFIG_SFX_NO_FILEIO
 //----------------------------------------------------------------------------
 // Load/Save functions
 
@@ -595,7 +551,9 @@ const char* sfx_saveRfx(const SfxParams *sp, const char *fileName)
         return "File write failed";
     return NULL;
 }
+#endif
 
+#ifndef CONFIG_SFX_NO_GENERATORS
 //----------------------------------------------------------------------------
 /*
  * Parameter generator functions
@@ -603,6 +561,53 @@ const char* sfx_saveRfx(const SfxParams *sp, const char *fileName)
  * If randSeed is being used the caller is responsible for seeding the
  * random number generator before the call and setting the variable after it.
  */
+
+/*
+ * Reset sound parameters to a default square wave.
+ * The randSeed is set to zero.
+ */
+void sfx_resetParams(SfxParams *sp)
+{
+    sp->randSeed = 0;
+    sp->waveType = SFX_SQUARE;
+
+    // Wave envelope parameters
+    sp->attackTime = 0.0f;
+    sp->sustainTime = 0.3f;
+    sp->sustainPunch = 0.0f;
+    sp->decayTime = 0.4f;
+
+    // Frequency parameters
+    sp->startFrequency = 0.3f;
+    sp->minFrequency = 0.0f;
+    sp->slide = 0.0f;
+    sp->deltaSlide = 0.0f;
+    sp->vibratoDepth = 0.0f;
+    sp->vibratoSpeed = 0.0f;
+    //sp->vibratoPhaseDelay = 0.0f;
+
+    // Tone change parameters
+    sp->changeAmount = 0.0f;
+    sp->changeSpeed = 0.0f;
+
+    // Square wave parameters
+    sp->squareDuty = 0.0f;
+    sp->dutySweep = 0.0f;
+
+    // Repeat parameters
+    sp->repeatSpeed = 0.0f;
+
+    // Phaser parameters
+    sp->phaserOffset = 0.0f;
+    sp->phaserSweep = 0.0f;
+
+    // Filter parameters
+    sp->lpfCutoff = 1.0f;
+    sp->lpfCutoffSweep = 0.0f;
+    sp->lpfResonance = 0.0f;
+    sp->hpfCutoff = 0.0f;
+    sp->hpfCutoffSweep = 0.0f;
+}
 
 void sfx_genPickupCoin(SfxParams* sp)
 {
@@ -873,3 +878,4 @@ void sfx_mutate(SfxParams *sp, float range, uint32_t mask)
         ++valPtr;
     }
 }
+#endif
