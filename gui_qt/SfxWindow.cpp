@@ -36,7 +36,7 @@
 #include <QStyle>
 #include <QToolBar>
 #include <QToolButton>
-#include "AWindow.h"
+#include "SfxWindow.h"
 #include "version.h"
 #include "audio.h"
 #include "sfx_gen.h"
@@ -120,7 +120,7 @@ static void addGeneratorButton(QWidget* parent, int id, QBoxLayout* lo)
     lo->addWidget(btn);
 }
 
-void AWindow::layoutGenerators(QBoxLayout* plo)
+void SfxWindow::layoutGenerators(QBoxLayout* plo)
 {
     QBoxLayout* lo = new QVBoxLayout;
     int i;
@@ -153,7 +153,8 @@ void AWindow::layoutGenerators(QBoxLayout* plo)
     plo->addLayout(lo);
 }
 
-void AWindow::addSlider(QGridLayout* grid, int row, const char* label, int neg)
+void SfxWindow::addSlider(QGridLayout* grid, int row, const char* label,
+                          int neg)
 {
     QSlider* slid = _param[row] = new QSlider(Qt::Horizontal);
     slid->setProperty("pid", row);
@@ -206,7 +207,7 @@ static const char* paramName[PARAM_COUNT] = {
 
 static uint32_t paramNegative = SFX_NEGATIVE_ONE_MASK << 1;
 
-void AWindow::layoutParams(QBoxLayout* plo)
+void SfxWindow::layoutParams(QBoxLayout* plo)
 {
     QGridLayout* grid = new QGridLayout;
     grid->setSpacing(4);
@@ -233,7 +234,7 @@ void AWindow::layoutParams(QBoxLayout* plo)
     plo->addLayout(grid, 2);
 }
 
-AWindow::AWindow()
+SfxWindow::SfxWindow()
 {
     int i, vol;
 
@@ -308,7 +309,7 @@ AWindow::AWindow()
 }
 
 
-AWindow::~AWindow()
+SfxWindow::~SfxWindow()
 {
     aud_stopAll();
     aud_freeBuffers(MAX_WAVE_SLOTS, _wav->bufId);
@@ -321,7 +322,7 @@ AWindow::~AWindow()
     delete _wav;
 }
 
-void AWindow::closeEvent( QCloseEvent* ev )
+void SfxWindow::closeEvent( QCloseEvent* ev )
 {
     QSettings settings;
     settings.setValue("window-size", size());
@@ -332,14 +333,14 @@ void AWindow::closeEvent( QCloseEvent* ev )
     QMainWindow::closeEvent( ev );
 }
 
-void AWindow::showAbout()
+void SfxWindow::showAbout()
 {
     QMessageBox::information( this, "About " APP_NAME,
         "Version " APP_VERSION "\n\nCopyright (c) 2022 Karl Robillard" );
 }
 
 
-void AWindow::createActions()
+void SfxWindow::createActions()
 {
 #define STD_ICON(id)    style()->standardIcon(QStyle::id)
 
@@ -366,7 +367,7 @@ void AWindow::createActions()
 }
 
 
-void AWindow::createMenus()
+void SfxWindow::createMenus()
 {
     QMenu* menu;
     QMenuBar* bar = menuBar();
@@ -397,7 +398,7 @@ void AWindow::createMenus()
 }
 
 
-void AWindow::createTools()
+void SfxWindow::createTools()
 {
     QAction* act;
     QToolButton* btn;
@@ -433,7 +434,7 @@ void AWindow::createTools()
 }
 
 
-void AWindow::setProjectFile( const QString& file )
+void SfxWindow::setProjectFile( const QString& file )
 {
     _prevProjPath = file;
     setWindowTitle(file + " - " APP_NAME);
@@ -443,7 +444,7 @@ void AWindow::setProjectFile( const QString& file )
 
 #define UTF8(str)   str.toUtf8().constData()
 
-bool AWindow::open(const QString& file, bool updateList)
+bool SfxWindow::open(const QString& file, bool updateList)
 {
     SfxParams* sp = _wav->params + _activeWav;
     const char* err = sfx_loadParams(sp, UTF8(file), NULL);
@@ -464,7 +465,7 @@ bool AWindow::open(const QString& file, bool updateList)
 }
 
 
-void AWindow::open()
+void SfxWindow::open()
 {
     QString fn;
     QString path(_prevProjPath);
@@ -476,7 +477,7 @@ void AWindow::open()
 }
 
 
-bool AWindow::saveRfx(const QString& file)
+bool SfxWindow::saveRfx(const QString& file)
 {
     const char* err = sfx_saveRfx(_wav->params + _activeWav, UTF8(file));
     if (err) {
@@ -487,14 +488,14 @@ bool AWindow::saveRfx(const QString& file)
 }
 
 
-void AWindow::save()
+void SfxWindow::save()
 {
     if (_actSave->isEnabled() && ! _prevProjPath.isEmpty())
         saveRfx(_prevProjPath);
 }
 
 
-bool AWindow::saveWaveFile(const Wave* wav, const QString& file)
+bool SfxWindow::saveWaveFile(const Wave* wav, const QString& file)
 {
     int16_t* pcm;
     int16_t* it;
@@ -522,7 +523,7 @@ bool AWindow::saveWaveFile(const Wave* wav, const QString& file)
 }
 
 
-void AWindow::saveAs()
+void SfxWindow::saveAs()
 {
     QString fn;
     QString path(_prevProjPath);
@@ -544,14 +545,14 @@ void AWindow::saveAs()
 }
 
 
-void AWindow::copy()
+void SfxWindow::copy()
 {
     _wav->clip = _wav->params[_activeWav];
     _actPaste->setEnabled(true);
 }
 
 
-void AWindow::paste()
+void SfxWindow::paste()
 {
     if (_wav->clip.waveType >= 0) {
         SfxParams* sp = _wav->params + _activeWav;
@@ -562,20 +563,20 @@ void AWindow::paste()
 }
 
 
-void AWindow::setPoc(bool on)
+void SfxWindow::setPoc(bool on)
 {
     _playOnChange = on;
 }
 
 
-void AWindow::playSound()
+void SfxWindow::playSound()
 {
     int i = _activeWav;
     _wav->srcId[i] = aud_playSound(_wav->bufId[i]);
 }
 
 
-void AWindow::generateSound()
+void SfxWindow::generateSound()
 {
     int gid = sender()->property("gid").toInt();
     if (gid < 0)
@@ -607,7 +608,7 @@ void AWindow::generateSound()
 }
 
 
-void AWindow::mutate()
+void SfxWindow::mutate()
 {
     SfxParams* sp = _wav->params + _activeWav;
     sfx_mutate(sp, 0.1f, 0xffffdf);
@@ -616,7 +617,7 @@ void AWindow::mutate()
 }
 
 
-void AWindow::randomize()
+void SfxWindow::randomize()
 {
     SfxParams* sp = _wav->params + _activeWav;
 
@@ -630,7 +631,7 @@ void AWindow::randomize()
 }
 
 
-void AWindow::updateParameterWidgets(const SfxParams* sp)
+void SfxWindow::updateParameterWidgets(const SfxParams* sp)
 {
     const float* fval = &sp->attackTime;
     _paramAssign = false;
@@ -685,7 +686,7 @@ static void drawWave(QPixmap* pix, const Wave* wave)
 }
 
 
-void AWindow::updateStats(const Wave* wdat)
+void SfxWindow::updateStats(const Wave* wdat)
 {
     drawWave(&_wavePix, wdat);
     _wavePic->setPixmap(_wavePix);
@@ -698,7 +699,7 @@ void AWindow::updateStats(const Wave* wdat)
 
 
 // Update audio buffer.
-void AWindow::regenerate(bool play)
+void SfxWindow::regenerate(bool play)
 {
     int i = _activeWav;
     Wave* wdat = _wav->wave + i;
@@ -732,7 +733,7 @@ void AWindow::regenerate(bool play)
 }
 
 
-void AWindow::chooseWaveSlot(int i, bool checked)
+void SfxWindow::chooseWaveSlot(int i, bool checked)
 {
     if (checked) {
         _activeWav = i & 3;
@@ -749,7 +750,7 @@ void AWindow::chooseWaveSlot(int i, bool checked)
 }
 
 
-void AWindow::chooseWaveForm(int wform, bool checked)
+void SfxWindow::chooseWaveForm(int wform, bool checked)
 {
     if (checked) {
         //printf("KR wform %d\n", wform);
@@ -762,7 +763,7 @@ void AWindow::chooseWaveForm(int wform, bool checked)
 }
 
 
-void AWindow::chooseFile(const QModelIndex& mi)
+void SfxWindow::chooseFile(const QModelIndex& mi)
 {
     QString fn = _files->filePath(mi);
     if (! fn.isEmpty()) {
@@ -772,7 +773,7 @@ void AWindow::chooseFile(const QModelIndex& mi)
 }
 
 
-void AWindow::volumeChanged(int value)
+void SfxWindow::volumeChanged(int value)
 {
     float fv = float(value) * 0.01f;
     _paramReadout[PARAM_VOL]->setText(QString::number(fv, 'f', 2));
@@ -782,7 +783,7 @@ void AWindow::volumeChanged(int value)
 }
 
 
-void AWindow::paramChanged(int value)
+void SfxWindow::paramChanged(int value)
 {
     int pid = sender()->property("pid").toInt();
     float fv = float(value) * 0.0025f;
@@ -808,7 +809,7 @@ int main( int argc, char **argv )
     app.setOrganizationName( APP_NAME );
     app.setApplicationName( APP_NAME );
 
-    AWindow w;
+    SfxWindow w;
     w.show();
 
     if( argc > 1 )

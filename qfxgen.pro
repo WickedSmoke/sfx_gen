@@ -10,6 +10,6 @@ CONFIG += qt
 INCLUDEPATH += gui_qt support
 LIBS += -lopenal
 
-HEADERS += gui_qt/AWindow.h sfx_gen.h
-SOURCES += gui_qt/AWindow.cpp sfx_gen.c
+HEADERS += gui_qt/SfxWindow.h sfx_gen.h
+SOURCES += gui_qt/SfxWindow.cpp sfx_gen.c
 SOURCES += support/audio_openal.c support/saveWave.c support/well512.c

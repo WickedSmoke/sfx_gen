@@ -6,7 +6,7 @@ exe %qfxgen [
     qt [widgets]
     include_from %gui_qt
     sources [
-        %gui_qt/AWindow.cpp
+        %gui_qt/SfxWindow.cpp
         %gui_qt/icons.qrc
         %sfx_gen.c
         %support/audio_openal.c

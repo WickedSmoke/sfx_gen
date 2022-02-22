@@ -1,14 +1,16 @@
-#ifndef AWINDOW_H
-#define AWINDOW_H
-//============================================================================
-//
-// AWindow
-//
-//============================================================================
+#ifndef SFX_WINDOW_H
+#define SFX_WINDOW_H
+/*
+  sfx_gen Qt GUI
+
+  Copyright 2022 Karl Robillard
+
+  This program may be used under the terms of the GPLv3 license
+  (see SfxWindow.cpp).
+*/
 
 
 #include <QMainWindow>
-
 
 #define PARAM_VOL   0
 #define PARAM_COUNT 23
@@ -24,14 +26,14 @@ class QLabel;
 class QPushButton;
 class QSlider;
 
-class AWindow : public QMainWindow
+class SfxWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
 
-    AWindow();
-    ~AWindow();
+    SfxWindow();
+    ~SfxWindow();
     bool open(const QString& file, bool updateList);
 
 public slots:
@@ -99,8 +101,8 @@ private:
     bool _playOnChange;
 
     // Disabled copy constructor and operator=
-    AWindow( const AWindow & ) : QMainWindow( 0 ) {}
-    AWindow &operator=( const AWindow & ) { return *this; }
+    SfxWindow( const SfxWindow & ) : QMainWindow( 0 ) {}
+    SfxWindow &operator=( const SfxWindow & ) { return *this; }
 };
 
 
