@@ -2,7 +2,9 @@
 #define AUDIO_H
 /*
   Audio Module
-  Copyright 2005-2012 Karl Robillard
+  Copyright 2005-2012,2022 Karl Robillard
+
+  This code may be used under the terms of the MIT license (see audio_openal.c).
 */
 
 #include <stdint.h>
