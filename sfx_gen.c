@@ -320,7 +320,7 @@ int sfx_generateWave(SfxSynth* synth, const SfxParams* sp)
             // Base waveform
             fp = (float)phase/period;
 
-#define RAMP(v, x1, x2, y1, y2) (y1 + (y2-y1) * ((v-x1) / (x2-x1)))
+#define RAMP(v, x1, x2, y1, y2) (y1 + (y2 - y1) * ((v - x1) / (x2 - x1)))
 
             switch (sp->waveType) {
                 case SFX_SQUARE:
