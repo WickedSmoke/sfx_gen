@@ -1,0 +1,70 @@
+#!/usr/bin/bash
+# Container build script for qfxgen.
+
+if [ ! -s project.tar.gz ]; then
+	copr -a
+fi
+
+TIME=$(date +%H%M%S)
+SCRIPT=build-$TIME
+ID=${SCRIPT}
+HDIR=/tmp
+CDIR=/tmp
+ARC_DIR=/tmp/qfxgen-0.5
+
+clean_dir () {
+    if [ -d "$1" ]; then rm -rf "$1"/*; else mkdir -p "$1"; fi
+}
+
+container_build () {
+	clean_dir ${ARC_DIR}
+
+	podman run -d -it --name=$ID $1 /bin/bash || exit
+	podman cp project.tar.gz $ID:$CDIR
+	podman cp $HDIR/${SCRIPT} $ID:$CDIR/${SCRIPT}
+	podman exec -it $ID /bin/bash $CDIR/${SCRIPT}
+}
+
+case $1 in
+windows)
+	echo '
+  mkdir qfxgen
+  cd qfxgen
+  tar xf /tmp/project.tar.gz
+  copr -t mingw
+' >$HDIR/${SCRIPT}
+
+	container_build dev/f35-mingw
+	podman cp $ID:/home/build/qfxgen/qfxgen.exe ${ARC_DIR}
+	podman cp $ID:/home/build/qfxgen/sfxgen.exe ${ARC_DIR}
+
+	# Build zip archive.
+	if [ "$2" != "-b" ]; then
+		FN=`readlink -f arc/mingw-qt_app.tar.gz`
+		tar xf $FN -C ${ARC_DIR} --strip-components=1
+		cd ${ARC_DIR%/*}; zip -r qfxgen-0.5.zip ${ARC_DIR##*/}
+	fi
+	;;
+
+linux)
+	echo '
+  mkdir qfxgen
+  cd qfxgen
+  tar xf /tmp/project.tar.gz
+  copr
+' >$HDIR/${SCRIPT}
+
+	container_build dev/f35
+	podman cp $ID:/home/build/qfxgen/qfxgen ${ARC_DIR}
+	podman cp $ID:/home/build/qfxgen/sfxgen ${ARC_DIR}
+	;;
+
+*)
+	echo "Usage: $0 {linux|windows} [-b]"
+	echo -e '\nOptions:'
+	echo '  -b    Build binary only; do not create archive.'
+	exit 1
+esac
+
+echo "$SCRIPT done!"
+podman stop $ID

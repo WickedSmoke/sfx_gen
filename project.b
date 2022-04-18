@@ -15,6 +15,7 @@ exe %qfxgen [
     ]
     linux [libs %openal]
     macx  [lflags "-framework OpenAL"]
+    win32 [libs %OpenAL32.dll]
 ]
 
 exe %sfxgen [
