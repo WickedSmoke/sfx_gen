@@ -117,6 +117,7 @@ void sfx_genPowerup(SfxParams*);
 void sfx_genHitHurt(SfxParams*);
 void sfx_genJump(SfxParams*);
 void sfx_genBlipSelect(SfxParams*);
+void sfx_genSynth(SfxParams*);
 void sfx_genRandomize(SfxParams*, int waveType);
 void sfx_mutate(SfxParams *params, float range, uint32_t mask);
 

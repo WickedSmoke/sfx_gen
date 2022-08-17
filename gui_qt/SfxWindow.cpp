@@ -82,7 +82,7 @@ struct WaveTables {
     SfxParams clip;
 };
 
-#define GEN_COUNT   9
+#define GEN_COUNT   10
 static const char* genName[] = {
     "Pickup/Coin",
     "Laser/Shoot",
@@ -91,6 +91,7 @@ static const char* genName[] = {
     "Hit/Hurt",
     "Jump",
     "Blip/Select",
+    "Synth",
     "Mutate",
     "Randomize"
 };
@@ -584,7 +585,7 @@ void SfxWindow::generateSound()
     if (gid < 0)
         return;
 
-    if (gid < 7) {
+    if (gid < GEN_COUNT-2) {
         SfxParams* sp = _wav->params + _activeWav;
 
         uint32_t seed = QRandomGenerator::global()->generate();
@@ -597,15 +598,16 @@ void SfxWindow::generateSound()
             case 4: sfx_genHitHurt(sp);     break;
             case 5: sfx_genJump(sp);        break;
             case 6: sfx_genBlipSelect(sp);  break;
+            case 7: sfx_genSynth(sp);       break;
         }
         sp->randSeed = seed;
 
         updateParameterWidgets(sp);
         regenerate(true);
     }
-    else if (gid == 7)
-        mutate();
     else if (gid == 8)
+        mutate();
+    else if (gid == 9)
         randomize();
 }
 

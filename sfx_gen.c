@@ -846,6 +846,35 @@ void sfx_genBlipSelect(SfxParams* sp)
     sp->hpfCutoff       = 0.1f;
 }
 
+void sfx_genSynth(SfxParams* sp)
+{
+    static const float synthFreq[3] = {
+        0.27231713609, 0.19255692561, 0.13615778746
+    };
+    static const float arpeggioMod[7] = {
+        0, 0, 0, 0, -0.3162, 0.7454, 0.7454
+    };
+
+    sfx_resetParams(sp);
+
+    sp->waveType = sfx_random(2);
+    sp->startFrequency  = synthFreq[ sfx_random(3) ];
+    sp->attackTime      = sfx_random(5) > 3 ? frnd(0.5) : 0;
+    sp->sustainTime     = frnd(1.0f);
+    sp->sustainPunch    = frnd(1.0f);
+    sp->decayTime       = frnd(0.9f) + 0.1f;
+    sp->changeAmount    = arpeggioMod[ sfx_random(7) ];
+    sp->changeSpeed     = frnd(0.5f) + 0.4f;
+    sp->squareDuty      = frnd(1.0f);
+    sp->dutySweep       = (sfx_random(3) == 2) ? frnd(1.0f) : 0.0f;
+    sp->lpfCutoff       = (sfx_random(2) == 1) ? 1.0f :
+                                        0.9f * frnd(1.0f) * frnd(1.0f) + 0.1f;
+    sp->lpfCutoffSweep  = rndNP1();
+    sp->lpfResonance    = frnd(1.0f);
+    sp->hpfCutoff       = (sfx_random(4) == 3) ? frnd(1.0f) : 0.0f;
+    sp->hpfCutoffSweep  = (sfx_random(4) == 3) ? frnd(1.0f) : 0.0f;
+}
+
 /*
  * Generate random sound.
  */
