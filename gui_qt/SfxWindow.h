@@ -52,6 +52,7 @@ private slots:
     void saveAs();
     void copy();
     void paste();
+    void resetParam();
     void setPoc(bool on);
     void playSound();
     void generateSound();
@@ -97,6 +98,7 @@ private:
     SfxSynth* _synth;
     WaveTables* _wav;
     int _activeWav;
+    int _recentPid;
     bool _paramAssign;
     bool _playOnChange;
 

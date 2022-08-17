@@ -246,6 +246,7 @@ SfxWindow::SfxWindow()
     _paramAssign = true;
     _playOnChange = true;
     _activeWav = 0;
+    _recentPid = 0;
 
     _synth = sfx_allocSynth(SFX_F32, 44100, 10);
 
@@ -387,6 +388,8 @@ void SfxWindow::createMenus()
     _actPaste =
     menu->addAction("&Paste", this, SLOT(paste()), QKeySequence::Paste);
     menu->addSeparator();
+    menu->addAction("Reset Parameter", this, SLOT(resetParam()),
+                    QKeySequence(Qt::Key_Backspace));
     menu->addAction("&Mutate",  this, SLOT(mutate()),
                     QKeySequence(Qt::Key_F3));
     menu->addAction("&Randomize", this, SLOT(randomize()),
@@ -635,6 +638,17 @@ void SfxWindow::randomize()
 }
 
 
+void SfxWindow::resetParam()
+{
+    if (_recentPid > 0) {
+        SfxParams sp;
+        sfx_resetParams(&sp);
+        const float* fval = &sp.attackTime;
+        _param[ _recentPid ]->setValue(fval[ _recentPid-1 ] * 400.0f);
+    }
+}
+
+
 void SfxWindow::updateParameterWidgets(const SfxParams* sp)
 {
     const float* fval = &sp->attackTime;
@@ -792,6 +806,7 @@ void SfxWindow::paramChanged(int value)
     int pid = sender()->property("pid").toInt();
     float fv = float(value) * 0.0025f;
     _paramReadout[pid]->setText(QString::number(fv, 'f', 3));
+    _recentPid = pid;
 
     if (_paramAssign) {
         float* fval = &_wav->params[_activeWav].attackTime;
