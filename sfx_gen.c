@@ -42,6 +42,9 @@ extern int sfx_random(int range);
 // SINGLE_FORMAT values: 1=uint8_t 2=int16_t 3=float
 //#define SINGLE_FORMAT   2
 
+// Apply squareDuty to sawtooth waveform.
+#define SAWTOOTH_DUTY
+
 #define PI  3.14159265f
 
 /*
@@ -357,7 +360,13 @@ int sfx_generateWave(SfxSynth* synth, const SfxParams* sp)
                     sample = (fp < squareDuty) ? 0.5f : -0.5f;
                     break;
                 case SFX_SAWTOOTH:
+#ifdef SAWTOOTH_DUTY
+                    sample = (fp < squareDuty) ?
+                             -1.0f + 2.0f * fp/squareDuty :
+                              1.0f - 2.0f * (fp-squareDuty)/(1.0f-squareDuty);
+#else
                     sample = 1.0f - fp*2;
+#endif
                     break;
                 case SFX_SINE:
                     sample = sinf(fp*2*PI);
@@ -750,9 +759,12 @@ void sfx_genPowerup(SfxParams* sp)
 {
     sfx_resetParams(sp);
 
-    if (sfx_random(2))
+    if (sfx_random(2)) {
         sp->waveType = SFX_SAWTOOTH;
-    else
+#ifdef SAWTOOTH_DUTY
+        sp->squareDuty = 1.0f;
+#endif
+    } else
         sp->squareDuty = frnd(0.6f);
 
     if (sfx_random(2)) {
@@ -781,8 +793,12 @@ void sfx_genHitHurt(SfxParams* sp)
     sp->waveType = sfx_random(3);
     if (sp->waveType == SFX_SINE)
         sp->waveType = SFX_NOISE;
-    if (sp->waveType == SFX_SQUARE)
+    else if (sp->waveType == SFX_SQUARE)
         sp->squareDuty = frnd(0.6f);
+#ifdef SAWTOOTH_DUTY
+    else if (sp->waveType == SFX_SAWTOOTH)
+        sp->squareDuty = 1.0f;
+#endif
 
     sp->startFrequency  = 0.2f + frnd(0.6f);
     sp->slide           = -0.3f - frnd(0.4f);
@@ -819,6 +835,10 @@ void sfx_genBlipSelect(SfxParams* sp)
     sp->waveType = sfx_random(2);
     if (sp->waveType == SFX_SQUARE)
         sp->squareDuty = frnd(0.6f);
+#ifdef SAWTOOTH_DUTY
+    else
+        sp->squareDuty = 1.0f;
+#endif
     sp->startFrequency  = 0.2f + frnd(0.4f);
     sp->attackTime      = 0.0f;
     sp->sustainTime     = 0.1f + frnd(0.1f);

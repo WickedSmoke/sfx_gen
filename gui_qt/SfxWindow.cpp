@@ -195,8 +195,8 @@ static const char* paramName[PARAM_COUNT] = {
     "Speed",
     "Change",           // TONE
     "Change speed",
-    "Duty",             // SQUARE
-    "Duty sweep",
+    "Cycle",            // DUTY
+    "Sweep",
     "Speed",            // REPEAT
     "Offset",           // PHASER
     "Sweep",
@@ -219,7 +219,7 @@ void SfxWindow::layoutParams(QBoxLayout* plo)
     grid->addWidget(new QLabel("SLIDE"),     7, 0, Qt::AlignRight);
     grid->addWidget(new QLabel("VIBRATO"),   9, 0, Qt::AlignRight);
     grid->addWidget(new QLabel("TONE"),     11, 0, Qt::AlignRight);
-    grid->addWidget(new QLabel("SQUARE"),   13, 0, Qt::AlignRight);
+    grid->addWidget(new QLabel("DUTY"),     13, 0, Qt::AlignRight);
     grid->addWidget(new QLabel("REPEAT"),   15, 0, Qt::AlignRight);
     grid->addWidget(new QLabel("PHASER"),   16, 0, Qt::AlignRight);
     grid->addWidget(new QLabel("LPF"),      18, 0, Qt::AlignRight);
