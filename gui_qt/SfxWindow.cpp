@@ -371,6 +371,12 @@ void SfxWindow::createActions()
 }
 
 
+#if QT_VERSION >= 0x060400
+#define ADD_ACTION(L, M, K)   menu->addAction(L, K, this, M)
+#else
+#define ADD_ACTION(L, M, K)   menu->addAction(L, this, M, K)
+#endif
+
 void SfxWindow::createMenus()
 {
     QMenu* menu;
@@ -381,19 +387,17 @@ void SfxWindow::createMenus()
     menu->addAction(_actSave);
     menu->addAction(_actSaveAs);
     menu->addSeparator();
-    menu->addAction("&Quit", this, SLOT(close()), QKeySequence::Quit);
+    ADD_ACTION("&Quit",  SLOT(close()), QKeySequence::Quit);
 
     menu = bar->addMenu( "&Edit" );
-    menu->addAction("&Copy",  this, SLOT(copy()),  QKeySequence::Copy);
+    ADD_ACTION("&Copy",  SLOT(copy()),  QKeySequence::Copy);
     _actPaste =
-    menu->addAction("&Paste", this, SLOT(paste()), QKeySequence::Paste);
+    ADD_ACTION("&Paste", SLOT(paste()), QKeySequence::Paste);
     menu->addSeparator();
-    menu->addAction("Reset Parameter", this, SLOT(resetParam()),
+    ADD_ACTION("Reset Parameter", SLOT(resetParam()),
                     QKeySequence(Qt::Key_Backspace));
-    menu->addAction("&Mutate",  this, SLOT(mutate()),
-                    QKeySequence(Qt::Key_F3));
-    menu->addAction("&Randomize", this, SLOT(randomize()),
-                    QKeySequence(Qt::Key_F4));
+    ADD_ACTION("&Mutate",    SLOT(mutate()),    QKeySequence(Qt::Key_F3));
+    ADD_ACTION("&Randomize", SLOT(randomize()), QKeySequence(Qt::Key_F4));
 
     bar->addSeparator();
 
