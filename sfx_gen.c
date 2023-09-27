@@ -304,10 +304,12 @@ int sfx_generateWave(SfxSynth* synth, const SfxParams* sp)
         envTime++;
         if (envTime > envLength[envStage]) {
             envTime = 0;
+next_stage:
             envStage++;
-
             if (envStage == 3)
-                sampleEnd = sampleCount;    // End generator loop.
+                break;          // End generator loop.
+            if (envLength[envStage] == 0)
+                goto next_stage;
         }
 
         switch (envStage) {
@@ -422,6 +424,7 @@ int sfx_generateWave(SfxSynth* synth, const SfxParams* sp)
         else if (ssample < -1.0f)
             ssample = -1.0f;
 
+        //printf("%d %f\n", sampleCount, ssample);
 #if SINGLE_FORMAT == 1
         *buffer++ = (uint8_t) (ssample*127.0f + 128.0f);
 #elif SINGLE_FORMAT == 2
