@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=qfxgen
+Comment=Sound effect generator
+Exec=qfxgen
+Icon=qfxgen
+Terminal=0
+Categories=Audio;AudioVideo;Qt
