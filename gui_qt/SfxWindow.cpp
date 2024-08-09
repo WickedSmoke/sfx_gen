@@ -340,7 +340,7 @@ void SfxWindow::closeEvent( QCloseEvent* ev )
 void SfxWindow::showAbout()
 {
     QMessageBox::information( this, "About " APP_NAME,
-        "Version " APP_VERSION "\n\nCopyright (c) 2022 Karl Robillard" );
+        "Version " APP_VERSION "\n\nCopyright (c) 2022,2023 Karl Robillard" );
 }
 
 

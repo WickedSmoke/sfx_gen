@@ -2,6 +2,6 @@
 #define VERSION_H
 
 #define APP_NAME    "qFXGen"
-#define APP_VERSION "0.5.0"
+#define APP_VERSION "0.6.0"
 
 #endif  // VERSION_H

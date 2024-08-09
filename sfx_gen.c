@@ -4,7 +4,7 @@
     http://www.drpetter.se/project_sfxr.html
 
     Copyright (c) 2007 Tomas Pettersson
-    Copyright (c) 2022 Karl Robillard
+    Copyright (c) 2022,2023 Karl Robillard
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),

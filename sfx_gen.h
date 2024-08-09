@@ -3,15 +3,15 @@
     A stand-alone C version of DrPetter's sfxr synthesizer from
     http://www.drpetter.se/project_sfxr.html
 
-    Copyright (c) 2022 Karl Robillard
+    Copyright (c) 2022,2023 Karl Robillard
 
     This code may be used under the terms of the MIT license (see sfx_gen.c).
 */
 
 #include <stdint.h>
 
-#define SFX_VERSION_STR "0.5.0"
-#define SFX_VERSION     0x000500
+#define SFX_VERSION_STR "0.6.0"
+#define SFX_VERSION     0x000600
 
 enum SfxWaveType {
     SFX_SQUARE,
