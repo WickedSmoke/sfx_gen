@@ -38,7 +38,11 @@
 #include <QToolButton>
 #include "SfxWindow.h"
 #include "version.h"
+#ifdef USE_FAUN
+#include <faun.h>
+#else
 #include "audio.h"
+#endif
 #include "sfx_gen.h"
 #include "saveWave.h"
 
@@ -75,8 +79,10 @@ struct Wave
 
 #define MAX_WAVE_SLOTS  4
 struct WaveTables {
+#ifndef USE_FAUN
     uint32_t bufId[MAX_WAVE_SLOTS];
     int srcId[MAX_WAVE_SLOTS];
+#endif
     Wave wave[MAX_WAVE_SLOTS];
     SfxParams params[MAX_WAVE_SLOTS];
     SfxParams clip;
@@ -252,8 +258,10 @@ SfxWindow::SfxWindow()
 
     _wav = new WaveTables;
     for (i = 0; i < MAX_WAVE_SLOTS; ++i) {
+#ifndef USE_FAUN
         _wav->bufId[i] = 0;
         _wav->srcId[i] = 0;
+#endif
         memset(_wav->wave + i, 0, sizeof(Wave));
         sfx_resetParams(_wav->params + i);
     }
@@ -300,11 +308,21 @@ SfxWindow::SfxWindow()
     _actPoc->setChecked(settings.value("play-on-change", true).toBool());
     }
 
+#ifdef USE_FAUN
+    const char* error =
+        faun_startup(MAX_WAVE_SLOTS, MAX_WAVE_SLOTS, 0, 0, APP_NAME);
+    if (error) {
+        QString msg("faun_startup: ");
+        msg.append(error);
+        QMessageBox::critical(this, "Audio System", msg);
+    }
+#else
     if (aud_startup()) {
         aud_genBuffers(MAX_WAVE_SLOTS, _wav->bufId);
     } else {
         QMessageBox::critical(this, "Audio System", "aud_startup() failed!\n");
     }
+#endif
 
     _param[0]->setValue(vol);
     updateParameterWidgets(_wav->params);
@@ -315,9 +333,13 @@ SfxWindow::SfxWindow()
 
 SfxWindow::~SfxWindow()
 {
+#ifdef USE_FAUN
+    faun_shutdown();
+#else
     aud_stopAll();
     aud_freeBuffers(MAX_WAVE_SLOTS, _wav->bufId);
     aud_shutdown();
+#endif
 
     free(_synth);
 
@@ -581,8 +603,12 @@ void SfxWindow::setPoc(bool on)
 
 void SfxWindow::playSound()
 {
+#ifdef USE_FAUN
+    faun_playSource(_activeWav, _activeWav, FAUN_PLAY_ONCE);
+#else
     int i = _activeWav;
     _wav->srcId[i] = aud_playSound(_wav->bufId[i]);
+#endif
 }
 
 
@@ -742,6 +768,12 @@ void SfxWindow::regenerate(bool play)
     wdat->channels   = 1;
 
     // Copy sample data to audio system.
+#ifdef USE_FAUN
+    faun_loadBufferPcm(i, FAUN_FMT_F32 | FAUN_FMT_MONO | FAUN_FMT_44100,
+                       _synth->samples.f, scount);
+    if (play)
+        faun_playSource(i, i, FAUN_PLAY_ONCE);
+#else
     if (_wav->srcId[i]) {
         // Must stop all as multiple sources may be attached to our buffer.
         aud_stopAll();
@@ -750,6 +782,7 @@ void SfxWindow::regenerate(bool play)
                       _synth->sampleRate);
     if (play)
         _wav->srcId[i] = aud_playSound(_wav->bufId[i]);
+#endif
 
     updateStats(wdat);
 }
@@ -799,7 +832,11 @@ void SfxWindow::volumeChanged(int value)
 {
     float fv = float(value) * 0.01f;
     _paramReadout[PARAM_VOL]->setText(QString::number(fv, 'f', 2));
+#ifdef USE_FAUN
+    faun_setParameter(0, MAX_WAVE_SLOTS, FAUN_VOLUME, fv);
+#else
     aud_setSoundVolume(fv);
+#endif
     if (_playOnChange)
         playSound();
 }
